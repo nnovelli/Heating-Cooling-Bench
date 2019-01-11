@@ -15,7 +15,7 @@ int redPin = 7;
 int greenPin = 6;
 int bluePin = 5;
 int potMin = 0;
-int potMax = 675;
+int potMax = 690;
 int avg;
 
 void setup() {
@@ -39,33 +39,38 @@ void setup() {
 
 void loop() {
   md.enableDrivers();
+  delay(1);  // The drivers require a maximum of 1ms to elapse when brought out of sleep mode.
+
   buttonState = digitalRead(buttonPin);
   int val = analogRead(potpin);
   //potspeed(val);
-  avg = map(val, potMin, potMax, 0, 4);
-  spd = map(avg, 0, 4, -400, 400);
-  //Serial.print(spd);
+  //Serial.println("Pot Value: ");
+  //Serial.println(val);
+  avg = map(val, potMin, potMax, 0, 16);
+  spd = map(avg, 0, 16, -400, 400);
+  //Serial.println("Motor Speed: ");
+  //Serial.println(spd);
   //md.setM1Speed(spd);
   md.setM2Speed(spd);
+  Serial.print("M2 current: ");
+  Serial.println(md.getM2CurrentMilliamps());
   //stopIfFault(); 
-  //int range = map(val, potMin, potMax, 0, 4);
-    switch (avg) {
-    case 0: 
-      setColor(0, 0, 200);
-      break;
-    case 1:  
-      setColor(0, 0, 90); 
-      break;
-    case 2:
-      setColor(0, 0, 0);  
-      break;
-    case 3: 
-      setColor(90, 0, 0); 
-      break;
-   case 4: 
-      setColor(200, 0, 0);
-      break;      
-  }
+  if (spd >= 2)
+{
+   setColor(200, 0, 0);
+}
+else if (spd < 1 && spd > -1)
+{
+  setColor(0, 200, 0);
+}
+else if (spd <= -1)
+{
+  setColor(0, 0,200);
+}
+else
+{
+  //Safe! Continue usual tasks...
+}
   }
 
 
